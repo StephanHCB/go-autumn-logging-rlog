@@ -1,8 +1,10 @@
 package go_autumn_logging_rlog
 
 import (
-	_ "github.com/StephanHCB/go-autumn-logging"
+	aulogging "github.com/StephanHCB/go-autumn-logging"
+	"github.com/StephanHCB/go-autumn-logging-rlog/implementation/logging"
 )
 
 func init() {
+	aulogging.Logger = &logging.RlogLoggingImplementation{}
 }
