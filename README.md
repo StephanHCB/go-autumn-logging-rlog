@@ -30,7 +30,8 @@ which funny enough is another (though very minimal) log abstraction.
 
 ### Limitations
 
-* only has Info and Error logging, so we had to map to those.
+* only has numeric log levels, so we had to map to those.
+* no default logger, you will always need to place a logger on the context
 
 ## Usage
 
@@ -45,10 +46,11 @@ Use [go-autumn-logging](https://github.com/StephanHCB/go-autumn-logging)!
 
 You're all set with this dependency.
 
-If you want context aware logging, call the function we provided to add the logger to the context.
+Rlog's interface does not support logging without a context, so you must call the function provided by rlog 
+to add the logger to the context.
 
 ```
-TODO example
+ctx = logr.NewContext(ctx, logger)
 ```
 
 ### How To Use
