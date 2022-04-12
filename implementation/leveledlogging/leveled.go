@@ -3,15 +3,16 @@ package leveledlogging
 import (
 	"context"
 	"fmt"
+	aulogging "github.com/StephanHCB/go-autumn-logging"
 	auloggingapi "github.com/StephanHCB/go-autumn-logging/api"
 	"github.com/go-logr/logr"
 	_ "github.com/go-logr/logr"
 )
 
 type RlogLeveledLoggingImplementation struct {
-	Ctx context.Context
-	Level int
-	Err error
+	Ctx    context.Context
+	Level  int
+	Err    error
 	Values map[string]string
 }
 
@@ -30,10 +31,12 @@ func (lv *RlogLeveledLoggingImplementation) Print(v ...interface{}) {
 	for k, v := range lv.Values {
 		rlogLogger = rlogLogger.WithValues(k, v)
 	}
+	message := fmt.Sprint(v...)
+	lv.callback(message)
 	if lv.Err != nil {
-		rlogLogger.Error(lv.Err, fmt.Sprint(v...))
+		rlogLogger.Error(lv.Err, message)
 	} else {
-		rlogLogger.Info(fmt.Sprint(v...))
+		rlogLogger.Info(message)
 	}
 }
 
@@ -42,9 +45,23 @@ func (lv *RlogLeveledLoggingImplementation) Printf(format string, v ...interface
 	for k, v := range lv.Values {
 		rlogLogger = rlogLogger.WithValues(k, v)
 	}
+	message := fmt.Sprintf(format, v...)
+	lv.callback(message)
 	if lv.Err != nil {
-		rlogLogger.Error(lv.Err, fmt.Sprintf(format, v...))
+		rlogLogger.Error(lv.Err, message)
 	} else {
-		rlogLogger.Info(fmt.Sprintf(format, v...))
+		rlogLogger.Info(message)
+	}
+}
+
+var levelNames = []string{"FATAL", "ERROR", "WARN", "INFO", "DEBUG", "TRACE"}
+
+func (lv *RlogLeveledLoggingImplementation) callback(message string) {
+	if aulogging.LogEventCallback != nil {
+		ctx := lv.Ctx
+		if ctx == nil {
+			ctx = context.Background()
+		}
+		aulogging.LogEventCallback(ctx, levelNames[lv.Level], message, lv.Err, lv.Values)
 	}
 }
