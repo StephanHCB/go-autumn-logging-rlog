@@ -61,11 +61,11 @@ Use call chaining style:
 import "github.com/StephanHCB/go-autumn-logging"
 
 func someFunction(ctx context.Context) {
-    aulogging.Logger.Ctx(ctx).Warn("something bad has happened")
+    aulogging.Logger.Ctx(ctx).Warn().Print("something bad has happened")
 }
 ```
 
-or if you prefer:
+or if you prefer (does the same thing):
 
 ```
 import "github.com/StephanHCB/go-autumn-logging"
